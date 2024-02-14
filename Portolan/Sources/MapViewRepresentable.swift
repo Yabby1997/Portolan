@@ -11,6 +11,7 @@ import MapKit
 
 struct MapViewRepresentable<Content>: UIViewRepresentable where Content: View {
     @Binding var pins: [PortolanPin]
+    @Binding var currentLocation: PortolanCoordinate?
     let selection: (PortolanPin) -> Void
     @ViewBuilder var content: (PortolanPin) -> Content
     
@@ -42,6 +43,7 @@ struct MapViewRepresentable<Content>: UIViewRepresentable where Content: View {
     
     func makeUIView(context: Context) -> some UIView {
         let mapView = MKMapView()
+//        mapView.showsUserLocation = true
         mapView.delegate = context.coordinator
         mapView.register(PortolanPinView.self, forAnnotationViewWithReuseIdentifier: NSStringFromClass(PortolanPinView.self))
         return mapView

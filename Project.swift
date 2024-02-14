@@ -19,6 +19,7 @@ let targets: [Target] = [
         infoPlist: .extendingDefault(
             with: [
                 "UILaunchStoryboardName": "LaunchScreen",
+                "NSLocationWhenInUseUsageDescription": true,
             ]
         ),
         sources: ["PortolanDemo/Sources/**"],
