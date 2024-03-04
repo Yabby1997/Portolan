@@ -8,13 +8,13 @@
 
 import SwiftUI
 
-public struct PortolanView<Content>: View where Content: View {
+struct PortolanView<Content>: View where Content: View {
     @Binding var pins: [PortolanPin]
     @Binding var currentLocation: PortolanCoordinate?
     let selection: (PortolanPin) -> Void
     @ViewBuilder var content: (PortolanPin) -> Content
     
-    public var body: some View {
+    var body: some View {
         MapViewRepresentable(
             pins: $pins,
             currentLocation: $currentLocation,
@@ -23,7 +23,7 @@ public struct PortolanView<Content>: View where Content: View {
         )
     }
     
-    public init(
+    init(
         pins: Binding<[PortolanPin]>,
         currentLocation: Binding<PortolanCoordinate?>,
         selection: @escaping (PortolanPin) -> Void,

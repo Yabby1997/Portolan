@@ -8,7 +8,9 @@
 
 import CoreLocation
 
+/// A geocoder for `Portolan`.
 public class PortolanGeocoder {
+    /// A shared instance of ``PortolanGeocoder``.
     public static let shared = PortolanGeocoder()
     
     private let geocoder = CLGeocoder()
@@ -16,6 +18,11 @@ public class PortolanGeocoder {
     
     private init() {}
     
+    /// Generates a geocoded result for provided coordinate.
+    ///
+    /// - Parameters:
+    ///     - coordinate: A ``PortolanCoordinate`` value to generate geocoding result.
+    /// - Returns: Geocoded result for provided `coordinate`.
     public func represent(for coordinate: PortolanCoordinate) async -> String? {
         guard let representation = cache[coordinate] else {
             let representation = await generate(for: coordinate)
