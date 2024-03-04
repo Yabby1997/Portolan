@@ -8,12 +8,12 @@
 
 import CoreLocation
 
-public struct PortolanCoordinate {
+public struct PortolanCoordinate: Hashable {
     public let latitude: Double
     public let longitude: Double
     public let timestamp: Date?
     
-    init(latitude: Double, longitude: Double, timestamp: Date? = nil) {
+    public init(latitude: Double, longitude: Double, timestamp: Date? = nil) {
         self.latitude = latitude
         self.longitude = longitude
         self.timestamp = timestamp
@@ -23,9 +23,15 @@ public struct PortolanCoordinate {
 extension CLLocation {
     var portolanCoordinate: PortolanCoordinate {
         .init(
-            latitude: self.coordinate.latitude,
-            longitude: self.coordinate.longitude,
-            timestamp: self.timestamp
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude,
+            timestamp: timestamp
         )
+    }
+}
+
+extension PortolanCoordinate {
+    var clLocation: CLLocation {
+        .init(latitude: latitude, longitude: longitude)
     }
 }
