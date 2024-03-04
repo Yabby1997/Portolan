@@ -20,15 +20,20 @@ public class PortolanGeocoder {
         guard let representation = cache[coordinate] else {
             let representation = await generate(for: coordinate)
             cache[coordinate] = representation
-            return representation.isEmpty ? nil : representation
+            return representation?.isEmpty == true ? nil : representation
         }
-        return representation
+        return representation.isEmpty ? nil : representation
     }
     
-    private func generate(for coordinate: PortolanCoordinate) async -> String {
+    private func generate(for coordinate: PortolanCoordinate) async -> String? {
         let locale = Locale.current
         return await withCheckedContinuation { continuation in
-            geocoder.reverseGeocodeLocation(coordinate.clLocation, preferredLocale: locale) { placemark, _ in
+            geocoder.reverseGeocodeLocation(coordinate.clLocation, preferredLocale: locale) { placemark, error in
+                if error != nil {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                
                 var title = ""
                 
                 guard let place = placemark?.first else {
