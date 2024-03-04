@@ -9,23 +9,22 @@
 import Combine
 import CoreLocation
 
-public final class PortolanLocationManager: NSObject {
+public final class PortolanLocationManager {
+    
     /// Errors that can occur while using ``PortolanLocationManager``.
     public enum Errors: Error {
-        case notDetermined
         case notAuthorized
     }
     
     private let locationManager = CLLocationManager()
+    private let coordinator = PortolanLocationManagerCoordinator()
     
-    @Published var currentLocation: PortolanCoordinate? = nil
     public var currentLocationPublisher: AnyPublisher<PortolanCoordinate?, Never> {
-        $currentLocation.compactMap { $0 }.eraseToAnyPublisher()
+        coordinator.currentLocationPublisher.map { $0.portolanCoordinate }.eraseToAnyPublisher()
     }
     
-    public override init() { 
-        super.init()
-        locationManager.delegate = self
+    public init() {
+        locationManager.delegate = coordinator
     }
     
     public func setup() throws {
@@ -40,18 +39,20 @@ public final class PortolanLocationManager: NSObject {
     }
 }
 
-extension PortolanLocationManager: CLLocationManagerDelegate {
-    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let recentLocation = locations.last else { return }
-        currentLocation = recentLocation.portolanCoordinate
+class PortolanLocationManagerCoordinator: NSObject, CLLocationManagerDelegate {
+    @Published private var currentLocation: CLLocation? = nil
+    var currentLocationPublisher: AnyPublisher<CLLocation, Never> { $currentLocation.compactMap{ $0 }.eraseToAnyPublisher() }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        currentLocation = locations.last
     }
     
-    public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        switch locationManager.authorizationStatus {
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
         case .denied:
-            locationManager.requestWhenInUseAuthorization()
+            manager.requestWhenInUseAuthorization()
         default:
-            locationManager.startUpdatingLocation()
+            manager.startUpdatingLocation()
         }
     }
 }
