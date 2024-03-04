@@ -10,18 +10,19 @@ import SwiftUI
 import Portolan
 
 struct PortolanDemoView: View {
-    @State var pins: [PortolanPin] = []
-    @State var metadata: [UUID: String] = [:]
-    @State var result: String?
+    @StateObject var viewModel: PortolanDemoViewModel
     
     var body: some View {
         ZStack {
-            PortolanView(pins: $pins) { pin in
-                result = metadata[pin.id] ?? ""
+            PortolanView(
+                pins: $viewModel.pins,
+                currentLocation: $viewModel.currentLocation
+            ) { pin in
+                viewModel.result = viewModel.metadata[pin.id] ?? ""
             } content: { pin in
                 ZStack {
                     Circle()
-                    Text(metadata[pin.id] ?? "")
+                    Text(viewModel.metadata[pin.id] ?? "")
                 }
                 .frame(width: 30, height: 30)
                 .foregroundStyle(.blue)
@@ -29,13 +30,13 @@ struct PortolanDemoView: View {
             .ignoresSafeArea()
             VStack {
                 Spacer()
-                if let result {
+                if let result = viewModel.result {
                     Text(result)
                 }
                 Button {
                     let pin = PortolanPin(latitude: Double.random(in: -90...90), longitude: Double.random(in: -180...180))
-                    metadata[pin.id] = ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈", "🍒", "🍑"].randomElement() ?? ""
-                    pins.append(pin)
+                    viewModel.metadata[pin.id] = ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈", "🍒", "🍑"].randomElement() ?? ""
+                    viewModel.pins.append(pin)
                 } label: {
                     Text("Random Pin")
                 }
@@ -43,9 +44,12 @@ struct PortolanDemoView: View {
             .font(.system(size: 40, weight: .bold))
             .foregroundStyle(.black)
         }
+        .onAppear {
+            viewModel.onAppear()
+        }
     }
 }
 
 #Preview {
-    PortolanDemoView()
+    PortolanDemoView(viewModel: PortolanDemoViewModel())
 }
