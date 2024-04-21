@@ -9,7 +9,7 @@
 import CoreLocation
 
 /// A struct represents coordinate for `Portolan`.
-public struct PortolanCoordinate: Hashable {
+public struct PortolanCoordinate: Hashable, Sendable {
     /// Latitude value of coordinate.
     public let latitude: Double
     /// Longitude value of coordinate.

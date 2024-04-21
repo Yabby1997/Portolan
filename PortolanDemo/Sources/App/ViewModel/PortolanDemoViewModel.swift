@@ -9,6 +9,7 @@
 import Foundation
 import Portolan
 
+@MainActor
 final class PortolanDemoViewModel: ObservableObject {
     @Published var location: String = ""
     @Published var currentCoordinate: PortolanCoordinate? = nil
@@ -29,11 +30,12 @@ final class PortolanDemoViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     func didTapFigureOutButton() {
         guard let currentCoordinate else { return }
-        Task.detached {
+        Task {
             guard let location = await PortolanGeocoder.shared.represent(for: currentCoordinate) else { return }
-            Task { @MainActor [weak self] in
+            await MainActor.run { [weak self] in
                 self?.location = location
             }
         }

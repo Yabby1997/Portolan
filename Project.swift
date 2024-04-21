@@ -8,31 +8,35 @@ let targets: [Target] = [
         bundleId: "com.seunghun.portolan",
         deploymentTarget: .iOS(targetVersion: "16.0", devices: [.iphone]),
         sources: ["Portolan/Sources/**"],
-        dependencies: []
+        dependencies: [],
+        settings: .settings(base: ["SWIFT_STRICT_CONCURRENCY": "complete"])
     ),
-//    Target(
-//        name: "PortolanDemo",
-//        platform: .iOS,
-//        product: .app,
-//        bundleId: "com.seunghun.portolan.demo",
-//        deploymentTarget: .iOS(targetVersion: "16.0", devices: [.iphone]),
-//        infoPlist: .extendingDefault(
-//            with: [
-//                "UILaunchStoryboardName": "LaunchScreen",
-//                "NSLocationWhenInUseUsageDescription": true,
-//            ]
-//        ),
-//        sources: ["PortolanDemo/Sources/**"],
-//        resources: ["PortolanDemo/Resources/**"],
-//        dependencies: [
-//            .target(name: "Portolan")
-//        ],
-//        settings: .settings(
-//            base: ["DEVELOPMENT_TEAM": "5HZQ3M82FA"],
-//            configurations: [],
-//            defaultSettings: .recommended
-//        )
-//    )
+    Target(
+        name: "PortolanDemo",
+        platform: .iOS,
+        product: .app,
+        bundleId: "com.seunghun.portolan.demo",
+        deploymentTarget: .iOS(targetVersion: "16.0", devices: [.iphone]),
+        infoPlist: .extendingDefault(
+            with: [
+                "UILaunchStoryboardName": "LaunchScreen",
+                "NSLocationWhenInUseUsageDescription": true,
+            ]
+        ),
+        sources: ["PortolanDemo/Sources/**"],
+        resources: ["PortolanDemo/Resources/**"],
+        dependencies: [
+            .target(name: "Portolan")
+        ],
+        settings: .settings(
+            base: [
+                "DEVELOPMENT_TEAM": "5HZQ3M82FA",
+                "SWIFT_STRICT_CONCURRENCY": "complete"
+            ],
+            configurations: [],
+            defaultSettings: .recommended
+        )
+    )
 ]
 
 let project = Project(
