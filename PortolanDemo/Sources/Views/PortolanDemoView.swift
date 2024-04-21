@@ -13,39 +13,19 @@ struct PortolanDemoView: View {
     @StateObject var viewModel: PortolanDemoViewModel
     
     var body: some View {
-        ZStack {
-            PortolanView(
-                pins: $viewModel.pins,
-                currentLocation: $viewModel.currentLocation
-            ) { pin in
-                viewModel.result = viewModel.metadata[pin.id] ?? ""
-            } content: { pin in
-                ZStack {
-                    Circle()
-                    Text(viewModel.metadata[pin.id] ?? "")
+        VStack {
+            Spacer()
+            VStack(spacing: 8) {
+                HStack {
+                    Text("latitude: \(viewModel.currentCoordinate?.latitude ?? .zero)")
+                    Text("longitude: \(viewModel.currentCoordinate?.longitude ?? .zero)")
                 }
-                .frame(width: 30, height: 30)
-                .foregroundStyle(.blue)
+                Text("\(viewModel.location)")
             }
-            .ignoresSafeArea()
-            VStack {
-                Spacer()
-                if let result = viewModel.result {
-                    Text(result)
-                }
-                Button {
-                    let pin = PortolanPin(latitude: Double.random(in: -90...90), longitude: Double.random(in: -180...180))
-                    viewModel.metadata[pin.id] = ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈", "🍒", "🍑"].randomElement() ?? ""
-                    viewModel.pins.append(pin)
-                } label: {
-                    Text("Random Pin")
-                }
+            Spacer()
+            Button(action: viewModel.didTapFigureOutButton) {
+                Text("Figure out!")
             }
-            .font(.system(size: 40, weight: .bold))
-            .foregroundStyle(.black)
-        }
-        .onAppear {
-            viewModel.onAppear()
         }
     }
 }
