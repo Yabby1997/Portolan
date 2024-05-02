@@ -6,10 +6,11 @@
 //  Copyright © 2024 seunghun. All rights reserved.
 //
 
-import CoreLocation
+@preconcurrency import CoreLocation
 
 /// A geocoder for `Portolan`.
-public class PortolanGeocoder {
+@globalActor
+public actor PortolanGeocoder {
     /// A shared instance of ``PortolanGeocoder``.
     public static let shared = PortolanGeocoder()
     
@@ -33,32 +34,20 @@ public class PortolanGeocoder {
     }
     
     private func generate(for coordinate: PortolanCoordinate) async -> String? {
-        let locale = Locale.current
-        return await withCheckedContinuation { continuation in
-            geocoder.reverseGeocodeLocation(coordinate.clLocation, preferredLocale: locale) { placemark, error in
-                if error != nil {
-                    continuation.resume(returning: nil)
-                    return
-                }
-                
-                var title = ""
-                
-                guard let place = placemark?.first else {
-                    continuation.resume(returning: title)
-                    return
-                }
-                
-                if let landmark = place.areasOfInterest?.first {
-                    title = landmark
-                } else if let locality = place.locality, let sublocality = place.subLocality {
-                    title = locality + " - " + sublocality
-                } else if let country = place.country, let locality = place.locality {
-                    title = country + " - " + locality
-                } else if let country = place.country {
-                    title = country
-                }
-                continuation.resume(returning: title)
-            }
+        guard let placemarks = try? await geocoder.reverseGeocodeLocation(coordinate.clLocation),
+              let placemark = placemarks.first else {
+            return nil
         }
+        
+        if let landmark = placemark.areasOfInterest?.first {
+            return landmark
+        } else if let locality = placemark.locality, let sublocality = placemark.subLocality {
+            return locality + " - " + sublocality
+        } else if let country = placemark.country, let locality = placemark.locality {
+            return country + " - " + locality
+        } else if let country = placemark.country {
+            return country
+        }
+        return nil
     }
 }
