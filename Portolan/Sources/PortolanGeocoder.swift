@@ -34,6 +34,7 @@ public actor PortolanGeocoder {
     }
     
     private func generate(for coordinate: PortolanCoordinate) async -> String? {
+        geocoder.cancelGeocode()
         guard let placemarks = try? await geocoder.reverseGeocodeLocation(coordinate.clLocation),
               let placemark = placemarks.first else {
             return nil
