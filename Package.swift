@@ -11,6 +11,7 @@ let package = Package(
     products: [
         .library(
             name: "Portolan",
+            type: .dynamic,
             targets: ["Portolan"]
         ),
     ],
